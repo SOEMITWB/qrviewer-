@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>QR Info Viewer</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f9f9f9; }
+    pre { white-space: pre-wrap; background: #fff; padding: 1em; border: 1px solid #ccc; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h2>QR Code Details</h2>
+  <pre id="output">Loading...</pre>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get("data");
+    const decoded = raw ? decodeURIComponent(raw.replace(/\+/g, ' ')) : "No data found.";
+    document.getElementById("output").textContent = decoded;
+  </script>
+</body>
+</html>
