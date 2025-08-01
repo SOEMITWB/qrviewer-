@@ -22,9 +22,24 @@
       filter: brightness(0) invert(1);
     }
 
-    h2 {
+    .header-block {
+      text-align: center;
+      margin-bottom: 1.5rem;
       color: #00bcd4;
-      margin-bottom: 1rem;
+    }
+
+    .header-block p {
+      margin: 0.3rem 0;
+      font-size: 1rem;
+    }
+
+    .header-block a {
+      color: #81d4fa;
+      text-decoration: none;
+    }
+
+    .header-block a:hover {
+      text-decoration: underline;
     }
 
     .info-box {
@@ -67,7 +82,14 @@
 </head>
 <body>
   <img class="logo" src="https://logos-world.net/wp-content/uploads/2020/04/Sony-Logo.png" alt="Sony Logo">
-  <h2>SOEM PC Details</h2>
+  
+  <div class="header-block">
+    
+    <h2>SONY EMCS (M) SDN BHD</p>
+    <p>Tel: <a href="tel:0389137200">03-8913 7200</a></p>
+    <h2>PC Details:</h2>
+  </div>
+
   <div class="info-box" id="output">
     <p class="empty">Loading...</p>
   </div>
