@@ -6,72 +6,89 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #111;
-      color: #f1f1f1;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #121212;
+      color: #e0e0e0;
       margin: 0;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    header img {
-      width: 160px;
-      height: auto;
+    img.logo {
+      width: 150px;
+      margin-bottom: 1rem;
       filter: brightness(0) invert(1);
-      transition: transform 0.3s ease;
-    }
-
-    header img:hover {
-      transform: scale(1.05);
     }
 
     h2 {
-      color: #f1f1f1;
-      margin-top: 10px;
+      color: #00bcd4;
+      margin-bottom: 1rem;
     }
 
-    pre {
-      white-space: pre-wrap;
-      background: #222;
-      color: #0f0;
-      padding: 1em;
-      border: 1px solid #555;
-      border-radius: 10px;
-      font-size: 16px;
-      line-height: 1.5;
-      overflow-x: auto;
+    .info-box {
+      background-color: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 1rem;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
     }
 
-    @media (max-width: 600px) {
-      pre {
-        font-size: 14px;
-      }
+    .info-line {
+      margin: 0.5rem 0;
+      word-break: break-word;
+    }
 
-      header img {
-        width: 120px;
-      }
+    .label {
+      font-weight: bold;
+      color: #81d4fa;
+    }
+
+    .value {
+      color: #ffffff;
+    }
+
+    .empty {
+      color: #ff8a80;
+      font-style: italic;
     }
   </style>
 </head>
 <body>
-  <header>
-    <img src="https://logos-world.net/wp-content/uploads/2020/04/Sony-Logo.png" alt="Sony Logo">
-    <h2>SOEM PC Details</h2>
-  </header>
-
-  <main>
-    <pre id="output">Loading...</pre>
-  </main>
+  <img class="logo" src="https://logos-world.net/wp-content/uploads/2020/04/Sony-Logo.png" alt="Sony Logo">
+  <h2>QR Code Details</h2>
+  <div class="info-box" id="output">
+    <p class="empty">Loading...</p>
+  </div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const raw = params.get("data");
-    const decoded = raw ? decodeURIComponent(raw.replace(/\+/g, ' ')) : "No data found.";
-    document.getElementById("output").textContent = decoded;
+
+    const output = document.getElementById("output");
+
+    if (!raw) {
+      output.innerHTML = '<p class="empty">⚠️ No data found in QR code.</p>';
+    } else {
+      const decoded = decodeURIComponent(raw.replace(/\+/g, ' '));
+      const lines = decoded.trim().split('\n');
+      output.innerHTML = ''; // Clear loading message
+
+      for (let line of lines) {
+        const [label, ...valueParts] = line.split(':');
+        const value = valueParts.join(':').trim();
+
+        if (label && value) {
+          const div = document.createElement('div');
+          div.className = 'info-line';
+          div.innerHTML = `<span class="label">${label}:</span> <span class="value">${value}</span>`;
+          output.appendChild(div);
+        }
+      }
+    }
   </script>
 </body>
 </html>
