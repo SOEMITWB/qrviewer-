@@ -12,9 +12,7 @@
       --card: #1e1e1e;
       --font: #e0e0e0;
     }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       padding: 1rem;
@@ -25,16 +23,13 @@
       flex-direction: column;
       align-items: center;
     }
-
     img.logo {
       width: 100px;
       margin-bottom: 0.5rem;
       filter: brightness(0) invert(1);
       transition: transform 0.3s ease;
     }
-
     img.logo:hover { transform: scale(1.08); }
-
     .header-block {
       text-align: center;
       margin-bottom: 0.5rem;
@@ -45,7 +40,6 @@
       width: 100%;
       max-width: 500px;
     }
-
     .header-block h2 {
       font-size: 1.3rem;
       margin: 0.5rem 0;
@@ -53,31 +47,24 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
     .header-block p {
       margin: 0.3rem 0;
       font-size: 1rem;
       color: var(--font);
     }
-
     .header-block a {
       color: var(--accent);
       text-decoration: none;
     }
-
     .header-block a:hover { text-decoration: underline; }
 
-    /* Label highlight style */
-    .label-highlight {
-      font-size: 1.4rem;
-      font-weight: bold;
-      color: #fff;
-      background: linear-gradient(90deg, #00bcd4, #81d4fa);
-      padding: 0.5rem 1.5rem;
-      border-radius: 50px;
-      margin: 1rem 0;
-      box-shadow: 0 0 15px rgba(0,188,212,0.7);
-      display: inline-block;
+    /* Label inside box */
+    .label-inside {
+      font-size: 0.85rem;
+      font-style: italic;
+      color: #777;
+      text-align: center;
+      margin-top: 0.8rem;
     }
 
     .info-box {
@@ -88,8 +75,10 @@
       width: 100%;
       max-width: 500px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
     }
-
     .info-line {
       display: flex;
       justify-content: space-between;
@@ -99,16 +88,12 @@
       border-bottom: 1px solid #333;
       transition: background 0.3s ease;
     }
-
     .info-line:hover { background-color: #2a2a2a; }
-
     .label {
       font-weight: bold;
       color: var(--accent);
     }
-
     .value { color: #fff; padding: 0.2rem 0.5rem; border-radius: 4px; }
-
     .value.allow { color: #00e676; }
     .value.not-allow { color: #ff1744; }
 
@@ -134,7 +119,6 @@
       gap: 10px;
       margin: 2rem auto;
     }
-
     .dot {
       width: 20px;
       height: 20px;
@@ -142,17 +126,14 @@
       animation: pulse 1s infinite ease-in-out;
       opacity: 0.3;
     }
-
     .dot:nth-child(1) { animation-delay: 0s; }
     .dot:nth-child(2) { animation-delay: 0.25s; }
     .dot:nth-child(4) { animation-delay: 0.5s; }
     .dot:nth-child(3) { animation-delay: 0.75s; }
-
     @keyframes pulse {
       0%, 100% { opacity: 0.3; transform: scale(1); }
       50% { opacity: 1; transform: scale(1.4); }
     }
-
     @media screen and (max-width: 600px) {
       .header-block h2 { font-size: 1.1rem; }
       .info-box { width: 90%; }
@@ -161,14 +142,10 @@
 </head>
 <body>
   <img class="logo" src="https://logos-world.net/wp-content/uploads/2020/04/Sony-Logo.png" alt="Sony Logo" />
-
   <div class="header-block">
     <h2>Sony EMCS (Malaysia) Sdn Bhd</h2>
     <p>📞: <a href="tel:0389137200">03-8913 7200</a></p>
   </div>
-
-  <!-- Label highlight will appear here -->
-  <div id="labelHighlightContainer"></div>
 
   <div class="info-box" id="output">
     <div class="throbber">
@@ -177,13 +154,18 @@
       <div class="dot"></div>
       <div class="dot"></div>
     </div>
+    <div id="labelInsideContainer" class="label-inside"></div>
   </div>
+
+  <p style="font-size:10px; color:#555555;">
+    Copyright © 2025 All Right Reserved
+  </p>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const raw = params.get("data");
     const output = document.getElementById("output");
-    const labelHighlight = document.getElementById("labelHighlightContainer");
+    const labelInside = document.getElementById("labelInsideContainer");
 
     function createLine(label, value) {
       const div = document.createElement('div');
@@ -200,7 +182,6 @@
         icon = '❌ ';
       }
 
-      // PC Type background color
       if (label.trim().toLowerCase() === "pc type") {
         const valLower = value.trim().toLowerCase();
         if (valLower === "office pc") valueClass += ' pc-office';
@@ -224,23 +205,22 @@
 
       const decoded = decodeURIComponent(raw.replace(/\+/g, ' '));
       const lines = decoded.trim().split('\n');
-      output.innerHTML = ''; // Clear throbber
-
+      // Keep throbber's container empty and add lines
+      output.innerHTML = '';
       lines.forEach(line => {
         const [label, ...valueParts] = line.split(':');
         const value = valueParts.join(':').trim();
         if (label && value) {
           if (label.trim().toLowerCase() === "label no") {
-            labelHighlight.innerHTML = `<div class="label-highlight">${value}</div>`;
+            labelInside.textContent = value;
           } else {
             output.appendChild(createLine(label.trim(), value));
           }
         }
       });
+      // Add label inside at the bottom of info-box
+      output.appendChild(labelInside);
     }, 1000);
   </script>
-  <p style="font-size:10px; color:#555555;">
-    Copyright © 2025 All Right Reserved
-  </p>
 </body>
 </html>
