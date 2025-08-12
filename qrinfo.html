@@ -98,11 +98,12 @@
     .value.not-allow { color: #ff1744; }
 
     /* PC Type background colors */
-    .pc-office { background-color: grey; }
-    .pc-production { background-color: green; }
-    .pc-scanning { background-color: orange; }
-    .pc-standalone { background-color: blue; }
-    .pc-soemkl-tablet { background-color: purple; }
+    .pc-office { background-color: grey; font-weight: bold; }
+    .pc-production { background-color: green; font-weight: bold; }
+    .pc-scanning { background-color: orange; font-weight: bold; }
+    .pc-standalone { background-color: blue; font-weight: bold; }
+    .pc-soemkl-tablet { background-color: purple; font-weight: bold; }
+
 
 
     .empty {
@@ -190,6 +191,7 @@
         else if (valLower === "production pc") valueClass += ' pc-production';
         else if (valLower === "scanning pc") valueClass += ' pc-scanning';
         else if (valLower === "stand alone pc") valueClass += ' pc-standalone';
+        else if (valLower === "soemkl tablet") valueClass += ' pc-soemkl-tablet';
       }
 
       div.innerHTML = `
@@ -226,4 +228,3 @@
   </script>
 </body>
 </html>
-
