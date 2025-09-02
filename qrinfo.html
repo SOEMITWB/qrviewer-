@@ -165,66 +165,84 @@
   </p>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const raw = params.get("data");
-    const output = document.getElementById("output");
-    const labelInside = document.getElementById("labelInsideContainer");
+const params = new URLSearchParams(window.location.search);
+const raw = params.get("data");
+const output = document.getElementById("output");
+const labelInside = document.getElementById("labelInsideContainer");
 
-    function createLine(label, value) {
-      const div = document.createElement('div');
-      div.className = 'info-line';
+// Short key to label mapping
+const labelMap = {
+  N: "PC Name",
+  T: "PC Type",
+  S: "Serial Number",
+  A: "Asset Tag",
+  P: "Status",
+  L: "Label no"
+};
 
-      let valueClass = '';
-      let icon = '';
+function createLine(label, value) {
+  const div = document.createElement('div');
+  div.className = 'info-line';
 
-      if (value === "Allowed to carry out") {
-        valueClass = 'allow';
-        icon = '✅ ';
-      } else if (value === "Not allowed to carry out") {
-        valueClass = 'not-allow';
-        icon = '❌ ';
+  let valueClass = '';
+  let icon = '';
+
+  if (value === "Allowed to carry out") {
+    valueClass = 'allow';
+    icon = '✅ ';
+  } else if (value === "Not allowed to carry out") {
+    valueClass = 'not-allow';
+    icon = '❌ ';
+  }
+
+  if (label.trim().toLowerCase() === "pc type") {
+    const valLower = value.trim().toLowerCase();
+    if (valLower === "office pc") valueClass += ' pc-office';
+    else if (valLower === "production pc") valueClass += ' pc-production';
+    else if (valLower === "scanning pc") valueClass += ' pc-scanning';
+    else if (valLower === "stand alone pc") valueClass += ' pc-standalone';
+    else if (valLower === "soemkl tablet") valueClass += ' pc-soemkl-tablet';
+  }
+
+  div.innerHTML = `
+    <span class="label">${label}:</span>
+    <span class="value ${valueClass}">${icon}${value}</span>
+  `;
+  return div;
+}
+
+setTimeout(() => {
+  if (!raw) {
+    output.innerHTML = '<p class="empty">⚠️ No data found in QR code.</p>';
+    return;
+  }
+
+  // Decode Base64
+  let decoded = "";
+  try {
+    decoded = atob(raw.replace(/-/g, '+').replace(/_/g, '/'));
+  } catch (e) {
+    output.innerHTML = '<p class="empty">⚠️ Invalid or corrupted QR data.</p>';
+    return;
+  }
+
+  // Parse short key data
+  const pairs = decoded.split(';');
+  output.innerHTML = '';
+  pairs.forEach(pair => {
+    const [key, ...valueParts] = pair.split(':');
+    const value = valueParts.join(':').trim();
+    const label = labelMap[key.trim()];
+    if (label && value) {
+      if (key.trim() === "L") {
+        labelInside.textContent = value;
+      } else {
+        output.appendChild(createLine(label, value));
       }
-
-      if (label.trim().toLowerCase() === "pc type") {
-        const valLower = value.trim().toLowerCase();
-        if (valLower === "office pc") valueClass += ' pc-office';
-        else if (valLower === "production pc") valueClass += ' pc-production';
-        else if (valLower === "scanning pc") valueClass += ' pc-scanning';
-        else if (valLower === "stand alone pc") valueClass += ' pc-standalone';
-        else if (valLower === "soemkl tablet") valueClass += ' pc-soemkl-tablet';
-      }
-
-      div.innerHTML = `
-        <span class="label">${label}:</span>
-        <span class="value ${valueClass}">${icon}${value}</span>
-      `;
-      return div;
     }
-
-    setTimeout(() => {
-      if (!raw) {
-        output.innerHTML = '<p class="empty">⚠️ No data found in QR code.</p>';
-        return;
-      }
-
-      const decoded = decodeURIComponent(raw.replace(/\+/g, ' '));
-      const lines = decoded.trim().split('\n');
-      // Keep throbber's container empty and add lines
-      output.innerHTML = '';
-      lines.forEach(line => {
-        const [label, ...valueParts] = line.split(':');
-        const value = valueParts.join(':').trim();
-        if (label && value) {
-          if (label.trim().toLowerCase() === "label no") {
-            labelInside.textContent = value;
-          } else {
-            output.appendChild(createLine(label.trim(), value));
-          }
-        }
-      });
-      // Add label inside at the bottom of info-box
-      output.appendChild(labelInside);
-    }, 1000);
+  });
+  output.appendChild(labelInside);
+}, 1000);
   </script>
 </body>
 </html>
